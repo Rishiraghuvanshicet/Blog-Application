@@ -75,6 +75,27 @@ const BlogDetails = () => {
   const handleEdit = () => {
     navigate(`/main-feed/blog/edit-post/${id}`);
   };
+  const handleDownloadWord = async () => {
+    try {
+      const res = await fetch(
+        `http://localhost:2000/API/V1/EXPORT/word/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${blog.title.replace(/\s+/g, "_")}.docx`;
+      a.click();
+    } catch (err) {
+      console.error("Error downloading Word file:", err);
+    }
+  };
 
   const handleLike = async () => {
     try {
@@ -152,7 +173,7 @@ const BlogDetails = () => {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          mt:30
+          mt: 30,
         }}
       >
         <SpinningLoader />
@@ -182,6 +203,15 @@ const BlogDetails = () => {
               <Typography variant="body1" sx={{ whiteSpace: "pre-line" }}>
                 {blog.content}
               </Typography>
+            </Box>
+            <Box sx={{ display:'flex' , justifyContent:'left', padding:0}}>
+            <Button
+              variant="contained"
+              sx={{ mb: 2, mt: 2,backgroundColor: "#2e2e2e", }}
+              onClick={handleDownloadWord}
+            >
+              Download as Word
+            </Button>
             </Box>
             {userId === blog?.author?._id && (
               <Button
@@ -271,7 +301,7 @@ const BlogDetails = () => {
                       color="text.primary"
                       sx={{ mt: 0.5, ml: 0.5 }}
                     >
-                     <FaRegHandPointRight /> {comment.text}
+                      <FaRegHandPointRight /> {comment.text}
                     </Typography>
                   </Box>
                 ))

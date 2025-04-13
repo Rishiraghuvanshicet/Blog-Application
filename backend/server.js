@@ -8,6 +8,7 @@ const connectDB = require("./config/connectDB");
 const userRoute = require("./routes/userRoute");
 const postRoute = require("./routes/postRoute");
 const authentication = require("./middleware/auth");
+const exportRoute = require("./routes/exportRoute");
 
 //middlewares
 app.use(cors());
@@ -17,6 +18,8 @@ app.use(express.urlencoded({ extended: true }));
 //Routes
 app.use("/API/V1/USER", userRoute);
 app.use("/API/V1/POST", authentication, postRoute);
+
+app.use("/API/V1/EXPORT", exportRoute);
 
 connectDB();
 

@@ -7,13 +7,11 @@ import BlogPostCard from "../components/BlogPostCard";
 import SpinningLoader from "../components/SpinningLoader";
 import { IoSearchOutline } from "react-icons/io5";
 
-
 const MainFeed = () => {
   const [allPost, setAllPost] = useState([]);
   const [filteredPost, setFilteredPost] = useState([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
-
 
   const shuffleArray = (array) => {
     const shuffled = [...array];
@@ -101,14 +99,51 @@ const MainFeed = () => {
               <IoSearchOutline />
             </Button>
           </Box>
-
+          <Box sx={{display:'flex', justifyContent:'right'}}>
+            <Button
+              variant="contained"
+              onClick={async () => {
+                try {
+                  const token = localStorage.getItem("token");
+                  const res = await fetch(
+                    "http://localhost:2000/API/V1/EXPORT/excel",
+                    {
+                      headers: {
+                        Authorization: `Bearer ${token}`,
+                      },
+                    }
+                  );
+                  const blob = await res.blob();
+                  const url = URL.createObjectURL(blob);
+                  const a = document.createElement("a");
+                  a.href = url;
+                  a.download = "All_Blog_Posts.xlsx";
+                  a.click();
+                } catch (err) {
+                  console.error("Excel download failed", err);
+                }
+              }}
+              sx={{ mb: 2, backgroundColor: "#2e2e2e" }}
+            >
+              Download All Posts (Excel)
+            </Button>
+          </Box>
           <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
             {loading ? (
-              <Box sx={{ display:'flex', justifyContent:'center' ,alignItems:'center',marginLeft:50}}><SpinningLoader /></Box>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  marginLeft: 50,
+                }}
+              >
+                <SpinningLoader />
+              </Box>
             ) : filteredPost.length > 0 ? (
               filteredPost.map((post) => (
                 <Box key={post._id} sx={{ minWidth: 220 }}>
-                  <BlogPostCard post={post}/>
+                  <BlogPostCard post={post} />
                 </Box>
               ))
             ) : (
