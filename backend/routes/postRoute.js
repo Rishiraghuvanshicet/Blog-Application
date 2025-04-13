@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const upload = require("../config/multer")
-const { addImagePost, getAllPost, getSinglePostDetail, getLikes, getComments, toggleLikePost, addCommentToPost, deleteComment } = require("../controllers/postController");
+const { addImagePost, getAllPost, getSinglePostDetail, getLikes, getComments, toggleLikePost, addCommentToPost, deleteComment, updatePost } = require("../controllers/postController");
 
 //image upload
 router.post("/createPost", upload.single("image"),addImagePost);
@@ -17,8 +17,10 @@ router.post("/addLike/:postId", toggleLikePost);
 router.post("/addComment/:postId", addCommentToPost);
 
 //delete Comment
+router.delete("/deleteComment/:postId/:commentId",deleteComment)
 
-router.delete("/deleteComment",deleteComment)
+//UpdatePost
+router.put("/updatePost/:postId", updatePost);
 
 
 module.exports = router;

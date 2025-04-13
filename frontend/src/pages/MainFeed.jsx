@@ -5,12 +5,24 @@ import Header from "../components/Header";
 import SlideBar from "../components/SlideBar";
 import BlogPostCard from "../components/BlogPostCard";
 import SpinningLoader from "../components/SpinningLoader";
+import { IoSearchOutline } from "react-icons/io5";
+
 
 const MainFeed = () => {
   const [allPost, setAllPost] = useState([]);
   const [filteredPost, setFilteredPost] = useState([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
+
+
+  const shuffleArray = (array) => {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+  };
 
   useEffect(() => {
     const fetchAllPost = async () => {
@@ -25,8 +37,9 @@ const MainFeed = () => {
           }
         );
         const posts = response.data.posts;
-        setAllPost(posts);
-        setFilteredPost(posts);
+        const shuffledPosts = shuffleArray(posts);
+        setAllPost(shuffledPosts);
+        setFilteredPost(shuffledPosts);
       } catch (error) {
         console.log(`There is an error in fetching all posts:`, error);
       } finally {
@@ -44,14 +57,14 @@ const MainFeed = () => {
     const trimmedSearch = search.trim().toLowerCase();
 
     if (trimmedSearch === "") {
-      setFilteredPost(allPost);
+      setFilteredPost(shuffleArray(allPost));
       return;
     }
 
     const filtered = allPost.filter((post) =>
       post.title.toLowerCase().includes(trimmedSearch)
     );
-    setFilteredPost(filtered);
+    setFilteredPost(shuffleArray(filtered));
   };
 
   return (
@@ -63,13 +76,13 @@ const MainFeed = () => {
         </Box>
 
         <Box sx={{ width: "80%" }}>
-          {/* Search Box */}
           <Box
             sx={{
               display: "flex",
               flexDirection: "row",
               justifyContent: "center",
-              gap: 2,
+              gap: 1,
+              mt: 2,
               mb: 3,
             }}
           >
@@ -82,24 +95,20 @@ const MainFeed = () => {
             />
             <Button
               variant="contained"
-              color="primary"
+              sx={{ backgroundColor: "#2e2e2e", borderRadius: "60%" }}
               onClick={handleSubmitSearch}
             >
-              Search
+              <IoSearchOutline />
             </Button>
           </Box>
 
-          {/* Blog Cards */}
           <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
             {loading ? (
-              <SpinningLoader />
+              <Box sx={{ display:'flex', justifyContent:'center' ,alignItems:'center',marginLeft:50}}><SpinningLoader /></Box>
             ) : filteredPost.length > 0 ? (
               filteredPost.map((post) => (
-                <Box
-                  key={post._id}
-                  sx={{ flex: "1 1 calc(20% - 16px)", minWidth: 220 }}
-                >
-                  <BlogPostCard post={post} />
+                <Box key={post._id} sx={{ minWidth: 220 }}>
+                  <BlogPostCard post={post}/>
                 </Box>
               ))
             ) : (

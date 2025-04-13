@@ -26,14 +26,9 @@ function About() {
             <Typography variant="body1" paragraph>
               - **Create Posts**: Write and share blog posts on various topics.
             </Typography>
+            
             <Typography variant="body1" paragraph>
-              - **Search Friends**: Find and connect with like-minded individuals.
-            </Typography>
-            <Typography variant="body1" paragraph>
-              - **Notifications**: Stay updated with new posts and comments.
-            </Typography>
-            <Typography variant="body1" paragraph>
-              - **Settings**: Personalize your blog experience.
+              - **View Posts**: Stay updated with new posts and comments.
             </Typography>
 
             <Typography variant="h6" gutterBottom>

@@ -5,77 +5,72 @@ import {
   Typography,
   Button,
   Box,
-  Drawer,
-  List,
-  ListItem,
-  ListItemText,
-  IconButton,
 } from "@mui/material";
-// import MenuIcon from "@mui/icons-material/Menu";
-import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Header = () => {
   const navigate = useNavigate();
 
-  const [open, setOpen] = useState(false);
-
-  const toggleDrawer = () => {
-    setOpen(!open);
-  };
   const handleLogout = () => {
     localStorage.removeItem("token");
     navigate("/");
   };
-  const menuItems = [
-    { text: "Create Post", link: "/create-post" },
-    { text: "Search Friend", link: "/search-friend" },
-    { text: "Notifications", link: "/notifications" },
-    { text: "Settings", link: "/settings" },
-  ];
 
   return (
-    <div>
-      <AppBar position="absolute">
-        <Toolbar>
-          {/* <IconButton edge="start" color="inherit" aria-label="menu" onClick={toggleDrawer}>
-            <MenuIcon />
-          </IconButton> */}
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+    <AppBar position="fixed" sx={{ backgroundColor: "#2e2e2e" }}>
+      <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
+        <Box sx={{ display: "flex", alignItems: "center", gap: 3 }}>
+          <Typography
+            variant="h6"
+            sx={{ color: "#f5f5f5", fontWeight: "bold" }}
+          >
             Blog-Application
           </Typography>
+
           <Box sx={{ display: "flex", gap: 2 }}>
-            <Button color="inherit" component={Link} to="/main-feed">
+            <Button
+              component={Link}
+              to="/main-feed"
+              sx={{ color: "#f5f5f5", textTransform: "none" }}
+            >
               Home
             </Button>
-            <Button color="inherit" component={Link} to="/main-feed/about">
+            <Button
+              component={Link}
+              to="/main-feed/about"
+              sx={{ color: "#f5f5f5", textTransform: "none" }}
+            >
               About
             </Button>
-            <Button color="inherit" component={Link} to="/main-feed/contact">
+            <Button
+              component={Link}
+              to="/main-feed/contact"
+              sx={{ color: "#f5f5f5", textTransform: "none" }}
+            >
               Contact
             </Button>
           </Box>
-          <Box>
-            <Button variant="contained" onClick={handleLogout}>
-              Logout
-            </Button>
-          </Box>
-        </Toolbar>
-      </AppBar>
-
-      {/* Drawer (Side Menu) */}
-      {/* <Drawer anchor="left" open={open} onClose={toggleDrawer}>
-        <Box sx={{ width: 250 }} role="presentation" onClick={toggleDrawer} onKeyDown={toggleDrawer}>
-          <List>
-            {menuItems.map((item, index) => (
-              <ListItem button key={index} component={Link} to={item.link}>
-                <ListItemText primary={item.text} />
-              </ListItem>
-            ))}
-          </List>
         </Box>
-      </Drawer> */}
-    </div>
+
+        <Box>
+          <Button
+            variant="contained"
+            onClick={handleLogout}
+            sx={{
+              backgroundColor: "#444",
+              color: "#fff",
+              textTransform: "none",
+              "&:hover": {
+                backgroundColor: "#555",
+                opacity:0.85
+              },
+            }}
+          >
+            Logout
+          </Button>
+        </Box>
+      </Toolbar>
+    </AppBar>
   );
 };
 

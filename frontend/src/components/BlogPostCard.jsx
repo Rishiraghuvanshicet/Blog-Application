@@ -16,7 +16,17 @@ const BlogPostCard = ({ post }) => {
   });
 
   return (
-    <Box onClick={navigateToBlog} sx={{ cursor: "pointer" }}>
+    <Box
+      onClick={navigateToBlog}
+      sx={{
+        cursor: "pointer",
+        transition: "transform 0.3s ease, box-shadow 0.3s ease",
+        "&:hover": {
+          transform: "scale(1.03)",
+          boxShadow: 6,
+        },
+      }}
+    >
       <Card
         sx={{
           maxWidth: 250,

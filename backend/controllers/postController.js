@@ -39,7 +39,7 @@ const addImagePost = async (req, res) => {
 
 const getAllPost = async (req, res) => {
   try {
-    const postArray = await Post.find().populate("author", " name email");
+    const postArray = await Post.find().populate("author", "name email");
 
     if (!postArray) {
       return res.status(401).json({ message: "Problem in finding Posts" });
@@ -60,8 +60,8 @@ const getSinglePostDetail = async (req, res) => {
     const { postId } = req.params;
 
     const post = await Post.findById(postId)
-      .populate("author", "username email")
-      .populate("comments.author", "username");
+    .populate("comments.author", "name _id") 
+    .populate("author", "name _id");
 
     if (!post) {
       return res.status(404).json({ message: "Post not found" });
@@ -81,7 +81,7 @@ const getLikes = async (req, res) => {
   const { postId } = req.params;
 
   try {
-    const post = await Post.findById(postId).populate("likes", "username _id"); //
+    const post = await Post.findById(postId).populate("likes", "name _id"); //
 
     if (!post) return res.status(404).json({ message: "Post not found" });
 
@@ -96,7 +96,8 @@ const getComments = async (req, res) => {
   const { postId } = req.params;
 
   try {
-    const post = await Post.findById(postId).populate("comments.author", "username _id"); // Populate the comment author details
+    const post = await Post.findById(postId)
+      .populate("comments.author", "name")  
 
     if (!post) return res.status(404).json({ message: "Post not found" });
 
@@ -145,6 +146,7 @@ const addCommentToPost = async (req, res) => {
   try {
     const post = await Post.findById(postId);
     if (!post) return res.status(404).json({ message: "Post not found" });
+
     const newComment = {
       text,
       author: userId,
@@ -153,16 +155,24 @@ const addCommentToPost = async (req, res) => {
     post.comments.push(newComment);
     await post.save();
 
-    res.status(201).json({ message: "Comment added", comments: post.comments });
+    // Populate comments' author after saving
+    const populatedPost = await Post.findById(postId)
+      .populate("comments.author", "userName");  // Populate 'userName' for comment authors
+
+    res.status(201).json({
+      message: "Comment added",
+      comments: populatedPost.comments,
+    });
   } catch (err) {
     console.error("Error adding comment:", err);
     res.status(500).json({ message: "Internal server error" });
   }
 };
 
+
 const deleteComment = async (req, res) => {
   const { postId, commentId } = req.params;
-  const userId = req.user.id;
+  const userId = req.userId;
 
   try {
     const post = await Post.findById(postId);
@@ -186,7 +196,8 @@ const deleteComment = async (req, res) => {
         .json({ message: "Unauthorized to delete this comment" });
     }
 
-    comment.remove();
+    // Remove the comment safely
+    post.comments = post.comments.filter((c) => c._id.toString() !== commentId);
 
     await post.save();
 
@@ -197,4 +208,46 @@ const deleteComment = async (req, res) => {
   }
 };
 
-module.exports = { addImagePost, getAllPost, getSinglePostDetail, getLikes, getComments, toggleLikePost, addCommentToPost, deleteComment };
+const updatePost = async (req, res) => {
+  const { postId } = req.params;
+  const { title, content } = req.body;
+  const userId = req.userId;
+
+  try {
+    const post = await Post.findById(postId);
+
+    if (!post) {
+      return res.status(404).json({ message: "Post not found" });
+    }
+
+    if (post.author.toString() !== userId) {
+      return res
+        .status(403)
+        .json({ message: "You are not authorized to update this post" });
+    }
+
+    if (title) post.title = title;
+    if (content) post.content = content;
+
+    await post.save();
+
+    res
+      .status(200)
+      .json({ message: "Post updated successfully", updatedPost: post });
+  } catch (error) {
+    console.error("Error updating post:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+module.exports = {
+  addImagePost,
+  getAllPost,
+  getSinglePostDetail,
+  getLikes,
+  getComments,
+  toggleLikePost,
+  addCommentToPost,
+  deleteComment,
+  updatePost
+};

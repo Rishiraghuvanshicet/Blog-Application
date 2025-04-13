@@ -15,10 +15,10 @@ const UserBlogOnly = () => {
   // Extract userId from token
   const getUserIdFromToken = () => {
     try {
-      const base64Payload = token.split(".")[1]; 
-      const decodedPayload = atob(base64Payload); 
-      const payloadObj = JSON.parse(decodedPayload); 
-      return payloadObj.id || payloadObj.userId || payloadObj._id; 
+      const base64Payload = token.split(".")[1];
+      const decodedPayload = atob(base64Payload);
+      const payloadObj = JSON.parse(decodedPayload);
+      return payloadObj.id || payloadObj.userId || payloadObj._id;
     } catch (err) {
       console.error("Failed to decode token:", err);
       return null;
@@ -71,13 +71,19 @@ const UserBlogOnly = () => {
 
           <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
             {loading ? (
-              <SpinningLoader />
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  marginLeft: 50,
+                }}
+              >
+                <SpinningLoader />
+              </Box>
             ) : userPosts.length > 0 ? (
               userPosts.map((post) => (
-                <Box
-                  key={post._id}
-                  sx={{ flex: "1 1 calc(20% - 16px)", minWidth: 220 }}
-                >
+                <Box key={post._id} sx={{ minWidth: 220 }}>
                   <BlogPostCard post={post} />
                 </Box>
               ))

@@ -64,7 +64,7 @@ const Contact = () => {
                 sx={{ marginBottom: 2 }}
               />
               <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-                <Button type="submit" variant="contained" color="primary">
+                <Button type="submit" variant="contained" sx={{backgroundColor: "#2e2e2e"}} >
                   Send Message
                 </Button>
               </Box>
